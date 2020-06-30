@@ -7,6 +7,7 @@ import { faHeart as farHeart } from "@fortawesome/free-regular-svg-icons";
 import { movies } from "./services/moviesService";
 import { paginate } from "./utils/paginate";
 import ListGroup from "./components/listGroup";
+import _ from "lodash";
 
 class App extends Component {
   state = {
@@ -15,6 +16,7 @@ class App extends Component {
     selectedRow: null,
     currentPage: 1,
     pageSize: 3,
+    sorted: { path: "name", order: "asc" },
   };
 
   handleLike = (row) => {
@@ -39,9 +41,21 @@ class App extends Component {
     this.setState({ rows, selectedRow: genre, currentPage: 1 });
   };
 
+  handleSort = (path) => {
+    let order = this.state.sorted.order === "asc" ? "desc" : "asc";
+    const rows = _.orderBy(this.state.rows, [path], [order]);
+    this.setState({ rows, sorted: { name: path, order } });
+  };
+
   render() {
-    const { rows: all, pageSize, currentPage, selectedRow } = this.state;
-    if (all.length === 0)
+    const {
+      rows: all,
+      pageSize,
+      currentPage,
+      selectedRow,
+      allRows,
+    } = this.state;
+    if (allRows.length === 0)
       return (
         <div className="container">
           <p>There's no movie</p>
@@ -68,6 +82,7 @@ class App extends Component {
               pageSize={pageSize}
               currentPage={currentPage}
               onPageChange={this.handelPageChange}
+              onSort={this.handleSort}
             />
           </div>
         </div>

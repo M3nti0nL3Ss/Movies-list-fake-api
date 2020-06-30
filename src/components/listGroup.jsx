@@ -3,15 +3,16 @@ import "bootstrap/dist/css/bootstrap.css";
 import { genres } from "../services/genreService";
 
 const ListGroup = (props) => {
+  const { selectProp, valueProp, nameProp, onListChange } = props;
   return (
     <ul className="list-group pagination">
       <button
         className={
-          props.selected === null
+          props[selectProp] === null
             ? "list-group-item list-group-item-action active"
             : "list-group-item list-group-item-action"
         }
-        onClick={() => props.onListChange(null)}
+        onClick={() => onListChange(null)}
         style={{ cursor: "pointer" }}
       >
         All genres
@@ -19,19 +20,25 @@ const ListGroup = (props) => {
       {genres.map((g) => (
         <button
           className={
-            g === props.selected
+            g === props[selectProp]
               ? "list-group-item list-group-item-action active"
               : "list-group-item list-group-item-action"
           }
-          key={g._id}
+          key={g[valueProp]}
           onClick={() => props.onListChange(g)}
           style={{ cursor: "pointer" }}
         >
-          {g.name}
+          {g[nameProp]}
         </button>
       ))}
     </ul>
   );
+};
+
+ListGroup.defaultProps = {
+  valueProp: "_id",
+  nameProp: "name",
+  selectProp: "selected",
 };
 
 export default ListGroup;

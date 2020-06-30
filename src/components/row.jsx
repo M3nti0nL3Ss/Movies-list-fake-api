@@ -1,6 +1,7 @@
 import React from "react";
 import "bootstrap/dist/css/bootstrap.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faHeart } from "@fortawesome/free-regular-svg-icons";
 
 const Row = (props) => {
   return (
@@ -13,7 +14,10 @@ const Row = (props) => {
         <FontAwesomeIcon
           icon={props.icon}
           onClick={() => props.onLike(props.row)}
-          style={{ cursor: "pointer" }}
+          style={{
+            cursor: "pointer",
+            color: props.icon === faHeart ? "black" : "indianred",
+          }}
           size="2x"
         />
       </td>

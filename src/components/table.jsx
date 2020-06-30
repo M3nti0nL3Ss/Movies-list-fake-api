@@ -12,16 +12,41 @@ class Table extends Component {
       onPageChange,
       currentPage,
       rowsResized,
+      onSort,
     } = this.props;
     return (
       <React.Fragment>
         <table className="table table-striped table-hover">
           <thead>
             <tr>
-              <th scope="col">#</th>
-              <th scope="col">Movie</th>
-              <th scope="col">Genre</th>
-              <th scope="col">Stars</th>
+              <th
+                onClick={() => onSort("_id")}
+                scope="col"
+                style={{ cursor: "pointer" }}
+              >
+                #
+              </th>
+              <th
+                onClick={() => onSort("name")}
+                scope="col"
+                style={{ cursor: "pointer" }}
+              >
+                Name
+              </th>
+              <th
+                onClick={() => onSort("genre.name")}
+                scope="col"
+                style={{ cursor: "pointer" }}
+              >
+                Genre
+              </th>
+              <th
+                onClick={() => onSort("stars")}
+                scope="col"
+                style={{ cursor: "pointer" }}
+              >
+                Stars
+              </th>
               <th scope="col">Like</th>
               <th scope="col">Handle</th>
             </tr>

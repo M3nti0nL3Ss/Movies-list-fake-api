@@ -9,14 +9,14 @@ export const movies = [
   },
   {
     _id: 2,
-    name: "fity shades of gray",
+    name: "Fity shades of gray",
     stars: 6.7,
     clicked: faHeart,
     genre: { _id: 2, name: "Thriller" },
   },
   {
     _id: 3,
-    name: "day 365",
+    name: "Day 365",
     stars: 6.7,
     clicked: faHeart,
     genre: { _id: 3, name: "Comedy" },
@@ -30,7 +30,7 @@ export const movies = [
   },
   {
     _id: 5,
-    name: "The basterde",
+    name: "The women",
     stars: 6.7,
     clicked: faHeart,
     genre: { _id: 3, name: "Comedy" },
@@ -51,7 +51,7 @@ export const movies = [
   },
   {
     _id: 8,
-    name: "The fucker",
+    name: "The man",
     stars: 6.7,
     clicked: faHeart,
     genre: { _id: 3, name: "Comedy" },
