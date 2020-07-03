@@ -1,8 +1,17 @@
 import React, { Component } from "react";
 import Row from "./row";
 import Pagination from "./pagination";
+import TableHeader from "../utils/tableHeader";
 
 class Table extends Component {
+  columns = [
+    { path: "_id", label: "#" },
+    { path: "name", label: "Title" },
+    { path: "genre.name", label: "Genre" },
+    { path: "stars", label: "Rate" },
+    { key: "like" },
+    { key: "handle" },
+  ];
   render() {
     const {
       onLike,
@@ -13,44 +22,13 @@ class Table extends Component {
       currentPage,
       rowsResized,
       onSort,
+      sorted,
     } = this.props;
+
     return (
       <React.Fragment>
         <table className="table table-striped table-hover">
-          <thead>
-            <tr>
-              <th
-                onClick={() => onSort("_id")}
-                scope="col"
-                style={{ cursor: "pointer" }}
-              >
-                #
-              </th>
-              <th
-                onClick={() => onSort("name")}
-                scope="col"
-                style={{ cursor: "pointer" }}
-              >
-                Name
-              </th>
-              <th
-                onClick={() => onSort("genre.name")}
-                scope="col"
-                style={{ cursor: "pointer" }}
-              >
-                Genre
-              </th>
-              <th
-                onClick={() => onSort("stars")}
-                scope="col"
-                style={{ cursor: "pointer" }}
-              >
-                Stars
-              </th>
-              <th scope="col">Like</th>
-              <th scope="col">Handle</th>
-            </tr>
-          </thead>
+          <TableHeader columns={this.columns} onSort={onSort} sorted={sorted} />
           <tbody>
             {rowsResized.map((row) => (
               <Row
