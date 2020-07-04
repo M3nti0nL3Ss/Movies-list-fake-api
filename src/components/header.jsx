@@ -1,18 +1,15 @@
 import React from "react";
+import { NavLink, Link } from "react-router-dom";
 import "bootstrap/dist/css/bootstrap.css";
 
 const Header = () => {
   return (
     <header>
-      <nav className="navbar navbar-expand-lg navbar-light">
+      <nav className="navbar navbar-expand-lg navbar-light bg-light">
         <div className="container">
-          <a
-            className="navbar-brand waves-effect"
-            href="https://mdbootstrap.com/docs/jquery/"
-          >
-            <strong className="blue-text">MDB</strong>
-          </a>
-
+          <Link className="navbar-brand" to="/">
+            <strong className="blue-text">Vidly</strong>
+          </Link>
           <button
             className="navbar-toggler"
             type="button"
@@ -26,38 +23,20 @@ const Header = () => {
           </button>
 
           <div className="collapse navbar-collapse" id="navbarSupportedContent">
-            <ul className="navbar-nav mr-auto">
-              <li className="nav-item active">
-                <a className="nav-link waves-effect" href="#">
-                  Home
-                  <span className="sr-only">(current)</span>
-                </a>
-              </li>
-              <li className="nav-item">
-                <a
-                  className="nav-link waves-effect"
-                  href="https://mdbootstrap.com/docs/jquery/"
-                >
-                  About MDB
-                </a>
-              </li>
-              <li className="nav-item">
-                <a
-                  className="nav-link waves-effect"
-                  href="https://mdbootstrap.com/docs/jquery/getting-started/download/"
-                >
-                  Free download
-                </a>
-              </li>
-              <li className="nav-item">
-                <a
-                  className="nav-link waves-effect"
-                  href="https://mdbootstrap.com/education/bootstrap/"
-                >
-                  Free tutorials
-                </a>
-              </li>
-            </ul>
+            <div className="navbar-nav">
+              <NavLink className="nav-link nav-item" to="/movies">
+                Home
+              </NavLink>
+              <NavLink className="nav-link nav-item" to="/costumers">
+                Costumers
+              </NavLink>
+              <NavLink className="nav-link nav-item" to="/login">
+                Login
+              </NavLink>
+              <NavLink className="nav-link nav-item" to="/register">
+                Register
+              </NavLink>
+            </div>
           </div>
         </div>
       </nav>

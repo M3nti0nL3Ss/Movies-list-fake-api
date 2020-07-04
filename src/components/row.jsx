@@ -2,12 +2,15 @@ import React from "react";
 import "bootstrap/dist/css/bootstrap.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faHeart } from "@fortawesome/free-regular-svg-icons";
+import { Link } from "react-router-dom";
 
 const Row = (props) => {
   return (
     <tr>
       <th scope="row">{props.row._id}</th>
-      <td>{props.row.name}</td>
+      <td>
+        <Link to={"/movies/" + props.row._id}>{props.row.name}</Link>
+      </td>
       <td>{props.row.genre.name}</td>
       <td>{props.row.stars}</td>
       <td>
