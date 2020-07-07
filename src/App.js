@@ -1,102 +1,33 @@
 import React, { Component } from "react";
-import "./App.css";
-import Table from "./components/table";
-import "bootstrap/dist/css/bootstrap.css";
-import { faHeart } from "@fortawesome/free-solid-svg-icons";
-import { faHeart as farHeart } from "@fortawesome/free-regular-svg-icons";
-import { movies } from "./services/moviesService";
-import { paginate } from "./utils/paginate";
-import ListGroup from "./components/listGroup";
-import Header from "./components/header";
-import _ from "lodash";
+import { Route, BrowserRouter, Switch, Redirect } from "react-router-dom";
+import Costumers from "./components/customers";
+import CostumersDetails from "./components/costumersDetails";
+import NotFound from "./components/notFound";
+import LoginForm from "./components/loginForm";
+import RegisterForm from "./components/registerForm";
+import MovieForm from "./components/movieForm";
+import Movies from "./components/movies";
+import { saveMovie } from "./services/moviesService";
 
 class App extends Component {
-  state = {
-    allRows: [],
-    rows: [],
-    selectedRow: null,
-    currentPage: 1,
-    pageSize: 3,
-    sorted: { path: "name", order: "asc" },
+  handleAddMovie = (movie) => {
+    return saveMovie(movie);
   };
-
-  componentDidMount() {
-    this.setState({ rows: movies, allRows: movies });
-  }
-
-  handleLike = (row) => {
-    const rows = [...this.state.rows];
-    const index = rows.indexOf(row);
-    rows[index].clicked = rows[index].clicked === faHeart ? farHeart : faHeart;
-    this.setState({ rows });
-  };
-
-  handleDelete = (row) => {
-    const rows = this.state.rows.filter((c) => c._id !== row._id);
-    this.setState({ rows, allRows: rows });
-  };
-
-  handelPageChange = (page) => {
-    this.setState({ currentPage: page });
-  };
-
-  handleListChange = (genre) => {
-    let rows = [...this.state.allRows];
-    if (genre !== null) rows = rows.filter((r) => r.genre._id === genre._id);
-    this.setState({ rows, selectedRow: genre, currentPage: 1 });
-  };
-
-  handleSort = (sorted) => {
-    this.setState({ sorted });
-  };
-
   render() {
-    const {
-      rows: all,
-      pageSize,
-      currentPage,
-      selectedRow,
-      allRows,
-      sorted,
-    } = this.state;
-    if (allRows.length === 0)
-      return (
-        <div className="container">
-          <p>There's no movie</p>
-        </div>
-      );
-    const allSorted = _.orderBy(all, [sorted.path], [sorted.order]);
-    const rowsResized = paginate(allSorted, currentPage, pageSize);
     return (
-      <React.Fragment>
-        <Header />
-        <div className="container">
-          <div className="row">
-            <div className="col-4">
-              <ListGroup
-                onListChange={this.handleListChange}
-                rows={allSorted}
-                selected={selectedRow}
-              />
-            </div>
-            <div className="col-8">
-              <p>Showing {allSorted.length} movies in the database.</p>
-
-              <Table
-                rowsResized={rowsResized}
-                rows={allSorted}
-                onLike={this.handleLike}
-                onDelete={this.handleDelete}
-                pageSize={pageSize}
-                currentPage={currentPage}
-                onPageChange={this.handelPageChange}
-                onSort={this.handleSort}
-                sorted={sorted}
-              />
-            </div>
-          </div>
-        </div>
-      </React.Fragment>
+      <BrowserRouter>
+        <Switch>
+          <Route path="/costumers" exact component={Costumers} />
+          <Route path="/costumers/:id" component={CostumersDetails} />
+          <Route path="/movies" exact component={Movies} />
+          <Route path="/movies/:id" component={MovieForm} />
+          <Route path="/not-found" component={NotFound} />
+          <Route path="/login" component={LoginForm} />
+          <Route path="/register" component={RegisterForm} />
+          <Redirect from="/" to="/movies" />
+          <Redirect to="/not-found" />
+        </Switch>
+      </BrowserRouter>
     );
   }
 }

@@ -4,9 +4,9 @@ import Header from "./header";
 const NotFound = () => {
   return (
     <React.Fragment>
+      <Header />
       <div className="container">
-        <div className="row">
-          <Header />
+        <div className="col">
           <br />
           <h1>404 - Not FOUND</h1>
         </div>
