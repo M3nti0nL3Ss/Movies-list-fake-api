@@ -7,9 +7,9 @@ import { Link } from "react-router-dom";
 const Row = (props) => {
   return (
     <tr>
-      <th scope="row">{props.row._id}</th>
+      <th scope="row">{props.row.id}</th>
       <td>
-        <Link to={"/movies/" + props.row._id}>{props.row.name}</Link>
+        <Link to={"/movies/" + props.row.id}>{props.row.name}</Link>
       </td>
       <td>{props.row.genre.name}</td>
       <td>{props.row.stars}</td>

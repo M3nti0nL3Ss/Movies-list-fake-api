@@ -1,0 +1,4 @@
+{
+    "genre": "http://127.0.0.1:8000/genre/",
+    "movieapi": "http://127.0.0.1:8000/movieapi/"
+}

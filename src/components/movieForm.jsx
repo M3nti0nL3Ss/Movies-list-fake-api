@@ -3,43 +3,46 @@ import Form from "./form";
 import Header from "./header";
 import Joi from "joi-browser";
 import { getGenres } from "../services/genreService";
-import { getMovie, saveMovie } from "../services/moviesService";
+import { getMovies, saveMovie } from "../services/moviesService";
 
 class MovieForm extends Form {
   state = {
     data: {
-      _id: "",
+      id: "",
       name: "",
       genreId: "",
       stars: "",
     },
-    genres: getGenres(),
+    genres: [],
     errors: {},
   };
 
-  componentDidMount() {
-    const genres = getGenres();
-    this.setState({ genres });
+  async componentDidMount() {
+    const genres = await getGenres();
+    this.setState({ genres:genres.data });
     const movieId = this.props.match.params.id;
     if (movieId === "new") return;
-    const movie = getMovie(movieId);
+    const movies = await getMovies();
+    const movie = movies.data.find(m => m.id === parseInt(movieId));
+    let genreId = movie.genre.toString().match("/[0-9]*[0-9]/")[0];
+    movie.genre = parseInt(genreId.slice(1,genreId.length -1));
     if (!movie) return this.props.history.replace("/not-found");
     this.setState({ data: this.mapToViewModel(movie) });
   }
 
   mapToViewModel = (movie) => {
     return {
-      _id: movie._id,
+      id: movie.id,
       name: movie.name,
       stars: movie.stars,
-      genreId: movie.genre._id,
+      genreId: movie.genre,
     };
   };
 
   schema = {
-    _id: Joi.string().allow(""),
+    id: Joi.number().allow(""),
     name: Joi.string().required().label("Name"),
-    genreId: Joi.string().required().label("Genre"),
+    genreId: Joi.number().required().label("Genre"),
     stars: Joi.number().max(8).required().label("Stars"),
   };
 

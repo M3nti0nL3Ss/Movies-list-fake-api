@@ -5,7 +5,7 @@ import TableHeader from "../utils/tableHeader";
 
 class Table extends Component {
   columns = [
-    { path: "_id", label: "#" },
+    { path: "id", label: "#" },
     { path: "name", label: "Title" },
     { path: "genre.name", label: "Genre" },
     { path: "stars", label: "Rate" },
@@ -32,7 +32,7 @@ class Table extends Component {
           <tbody>
             {rowsResized.map((row) => (
               <Row
-                key={row._id}
+                key={row.id}
                 onLike={onLike}
                 icon={row.clicked}
                 row={row}

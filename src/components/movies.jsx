@@ -4,13 +4,15 @@ import Table from "./table";
 import "bootstrap/dist/css/bootstrap.css";
 import { faHeart } from "@fortawesome/free-solid-svg-icons";
 import { faHeart as farHeart } from "@fortawesome/free-regular-svg-icons";
-import { getMovies, getMovieByName } from "../services/moviesService";
+import { getMovies, getMovieByName,movieToRender } from "../services/moviesService";
 import { paginate } from "../utils/paginate";
 import ListGroup from "./listGroup";
 import Header from "./header";
 import _ from "lodash";
 import { Link } from "react-router-dom";
 import Input from "./input";
+import http from "../services/httpService";
+import config from "../config.json";
 
 class Movies extends Component {
   state = {
@@ -19,12 +21,19 @@ class Movies extends Component {
     selectedRow: null,
     currentPage: 1,
     pageSize: 3,
+    searchText: "",
     sorted: { path: "name", order: "asc" },
   };
 
-  componentDidMount() {
-    this.setState({ rows: getMovies(), allRows: getMovies() });
-  }
+  async componentDidMount() {
+    //has to be corrected
+    const movies = await getMovies();
+    const data = [];
+    for(let row of movies.data){
+      data.push(await movieToRender(row));
+    }
+    this.setState({rows:data,allRows:data});
+    }
 
   handleLike = (row) => {
     const rows = [...this.state.rows];
@@ -33,8 +42,9 @@ class Movies extends Component {
     this.setState({ rows });
   };
 
-  handleDelete = (row) => {
-    const rows = this.state.rows.filter((c) => c._id !== row._id);
+  handleDelete = async (row) => {
+    await http.delete(`${config.movieapi}${row.id}/`,row);
+    const rows = this.state.rows.filter((c) => c.id !== row.id);
     this.setState({ rows, allRows: rows });
   };
 
@@ -44,25 +54,24 @@ class Movies extends Component {
 
   handleListChange = (genre) => {
     let rows = [...this.state.allRows];
-    if (genre !== null) rows = rows.filter((r) => r.genre._id === genre._id);
-    this.setState({ rows, selectedRow: genre, currentPage: 1 });
+    if (genre !== null) rows = rows.filter((r) => r.genre.id === genre.id);
+    this.setState({ rows, selectedRow: genre, currentPage: 1, searchText: "" });
   };
 
   handleSort = (sorted) => {
     this.setState({ sorted });
   };
 
-  handleSearch = (name) => {
-    if (name.currentTarget.value !== "") {
-      const rows = getMovieByName(name.currentTarget.value);
-      this.setState({ rows, currentPage: 1, selectedRow: null });
-    } else {
-      this.setState({
-        rows: this.state.allRows,
-        currentPage: 1,
-        selectedRow: null,
-      });
-    }
+  handleSearch = async ({ currentTarget }) => {
+    const string = currentTarget.value;
+    const rows = string !== "" ? await getMovieByName(string) : this.state.allRows;
+    //console.log(rows);
+    this.setState({
+      searchText: string,
+      currentPage: 1,
+      selectedRow: null,
+      rows: rows,
+    });
   };
 
   render() {
@@ -77,7 +86,7 @@ class Movies extends Component {
     if (allRows.length === 0)
       return (
         <div className="container">
-          <p>There's no movie</p>
+          <p>Loading...</p>
         </div>
       );
     const allSorted = _.orderBy(all, [sorted.path], [sorted.order]);
@@ -105,6 +114,7 @@ class Movies extends Component {
               <Input
                 name="search"
                 label="Search"
+                value={this.state.searchText}
                 onChange={this.handleSearch}
               />
               <p>Showing {allSorted.length} movies in the database.</p>

@@ -1,8 +1,12 @@
 import React, { Component } from "react";
 import "bootstrap/dist/css/bootstrap.css";
-import { genres } from "../services/genreService";
+import { getGenres } from "../services/genreService";
 
 class ListGroup extends Component {
+  state= {genres: []};
+  componentDidMount() {
+    getGenres().then(res => {this.setState({genres:res.data})});
+  }
   render() {
     const { selectProp, valueProp, nameProp, onListChange } = this.props;
     return (
@@ -18,7 +22,7 @@ class ListGroup extends Component {
         >
           All genres
         </button>
-        {genres.map((g) => (
+        {this.state.genres.map((g) => (
           <button
             className={
               g === this.props[selectProp]
@@ -38,7 +42,7 @@ class ListGroup extends Component {
 }
 
 ListGroup.defaultProps = {
-  valueProp: "_id",
+  valueProp: "id",
   nameProp: "name",
   selectProp: "selected",
 };

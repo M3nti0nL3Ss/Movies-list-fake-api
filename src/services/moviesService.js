@@ -1,97 +1,52 @@
-import { faHeart } from "@fortawesome/free-regular-svg-icons";
-import { getGenres } from "./genreService";
-const movies = [
-  {
-    _id: "1",
-    name: "6 underground",
-    stars: 7.7,
-    clicked: faHeart,
-    genre: { _id: "1", name: "Action" },
-  },
-  {
-    _id: "2",
-    name: "Fity shades of gray",
-    stars: 8.7,
-    clicked: faHeart,
-    genre: { _id: "2", name: "Thriller" },
-  },
-  {
-    _id: "3",
-    name: "Day 365",
-    stars: 6.7,
-    clicked: faHeart,
-    genre: { _id: "3", name: "Comedy" },
-  },
-  {
-    _id: "4",
-    name: "The joker",
-    stars: 5.7,
-    clicked: faHeart,
-    genre: { _id: "2", name: "Thriller" },
-  },
-  {
-    _id: "5",
-    name: "The women",
-    stars: 1.7,
-    clicked: faHeart,
-    genre: { _id: "3", name: "Comedy" },
-  },
-  {
-    _id: "6",
-    name: "The good",
-    stars: 5.6,
-    clicked: faHeart,
-    genre: { _id: "1", name: "Action" },
-  },
-  {
-    _id: "7",
-    name: "The beau",
-    stars: 2.7,
-    clicked: faHeart,
-    genre: { _id: "2", name: "Thriller" },
-  },
-  {
-    _id: "8",
-    name: "The man",
-    stars: 3.7,
-    clicked: faHeart,
-    genre: { _id: "3", name: "Comedy" },
-  },
-];
+import config from "../config.json";
+import http from "./httpService";
+import { faHeart as farHeart } from "@fortawesome/free-regular-svg-icons";
 
-export function getMovies() {
+
+export async function getMovies() {
+  const movies = await http.get(config.movieapi);
   return movies;
 }
 
-export function getMovie(id) {
-  return movies.find((m) => m._id === id);
+export async function movieToRender(movie){
+  const data = movie;
+  data.clicked = farHeart;
+  const genre = await http.get(data.genre);
+  data.genre = genre.data;
+  return data;
 }
 
-export function saveMovie(movie) {
-  let movieInDb = movies.find((m) => m._id === movie._id) || {};
+export async function saveMovie(movie) {
+  const movies = await getMovies();
+  let movieInDb = movies.data.find((m) => m.id === movie.id) || {};
   movieInDb.name = movie.name;
-  const genresAPI = getGenres();
-  movieInDb.genre = genresAPI.find((g) => g._id === movie.genreId);
-  movieInDb.stars = movie.stars;
-  movieInDb.clicked = faHeart;
-  //movieInDb.dailyRentalRate = movie.dailyRentalRate;
-
-  if (!movieInDb._id) {
-    movieInDb._id = Date.now().toString();
-    movies.push(movieInDb);
-  }
-
-  return movieInDb;
+  movieInDb.genre = config.genre + movie.genreId + "/";
+  movieInDb.stars = parseInt(movie.stars);
+  if (!movieInDb.id) {
+    await http.post(config.movieapi,movieInDb);
+  }else
+  await http.put(`${config.movieapi}${movie.id}/`,movieInDb);
+  
+  return await movieToRender(movieInDb);
 }
 
-export function getMovieByName(name) {
+export async function getMovieByName(name) {
+  const movies = await getMovies();
   const moviesFound = [];
-  moviesFound.push(movies.find((m) => m.name.includes(name)));
-  return moviesFound;
+  let m = movies.data.find((m) => m.name.toLowerCase().includes(name.toLowerCase()));
+  if(m){
+    moviesFound.push(m);
+    const moviesTorender = [];
+    for(let row of moviesFound)
+      moviesTorender.push(await movieToRender(row));
+    return moviesTorender;
+    }
+  return [];
 }
 
 export function deleteMovie(id) {
-  let movieInDb = movies.find((m) => m._id === id);
+  const movies = getMovies();
+  let movieInDb = movies.find((m) => m.id === id);
   movies.splice(movies.indexOf(movieInDb), 1);
   return movieInDb;
 }
